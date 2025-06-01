@@ -81,7 +81,7 @@ def read_completed_alphas(filepath):
 
 if __name__ == '__main__':
     # 配置区域
-    dataset_id = 'model77'
+    dataset_id = 'fundamental6'
     step1_tag = f'{dataset_id}_usa_1step'
     s = login()
     # df = get_datafields(s, dataset_id=dataset_id, region='USA', universe='TOP3000', delay=1)

@@ -80,7 +80,7 @@ if __name__ == '__main__':
     universe = 'TOP3000'
     delay = 1
     instrumentType = 'EQUITY'
-    dataset_id = 'model77'
+    dataset_id = 'fundamental6'
     step1_tag = f'{dataset_id}_usa_1step'
     step2_tag = f'{dataset_id}_usa_2step'
     fo_tracker = get_alphas('2024-10-07', '2025-12-31',
