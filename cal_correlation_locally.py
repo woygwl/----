@@ -292,7 +292,7 @@ if __name__ == '__main__':
     download_data(flag_increment=True)
 
     os_alpha_ids, os_alpha_rets = load_data()
-    alpha_ids = pd.read_csv(r'C:\Users\1\Desktop\特征挖掘\records\submitable_alpha.csv')
+    alpha_ids = pd.read_csv(r'records\submitable_alpha.csv')
 
     # 并行执行 calc_self_corr
     with ThreadPoolExecutor(max_workers=10) as executor:  # 可根据实际情况调整 max_workers
@@ -311,5 +311,5 @@ if __name__ == '__main__':
     # alpha_ids['max_corr'] = [calc_self_corr(alpha_id=alpha_id, os_alpha_rets=os_alpha_rets, os_alpha_ids=os_alpha_ids) for alpha_id in alpha_ids['id']]
 
     alpha_ids.sort_values(by='max_corr', ascending=True, inplace=True)
-    alpha_ids_final = alpha_ids[alpha_ids['max_corr'] <= 0.5].drop(columns=['max_corr'])
-    alpha_ids_final.to_csv(r'D:\特征挖掘\records\submitable_alpha_final.csv', index=False)
+    # alpha_ids_final = alpha_ids[alpha_ids['max_corr'] <= 0.5]
+    alpha_ids.to_csv(r'records\submitable_alpha_final.csv', index=False)
