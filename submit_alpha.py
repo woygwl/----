@@ -72,7 +72,7 @@ if __name__ == '__main__':
     submitable_alpha_file = os.path.join(RECORDS_PATH, 'submitable_alpha_final.csv')
     df = pd.read_csv(submitable_alpha_file)
     df['pyramids'] = df['checks'].apply(lambda x: next(([y['name'] for y in item['pyramids']] for item in eval(x) if item['name'] == 'MATCHES_PYRAMID'), None))
-    df = df.sort_values(by=['fitness', 'sharpe'], ascending=[True, True]).reset_index(drop=True)
+    # df = df.sort_values(by=['fitness', 'sharpe'], ascending=[True, True]).reset_index(drop=True)
     id_list = df['id'].tolist()
     # 这里面替换你的alpha_id
     submittable_alphas = id_list
