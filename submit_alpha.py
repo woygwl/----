@@ -74,12 +74,10 @@ if __name__ == '__main__':
     df['pyramids'] = df['checks'].apply(lambda x: next(([y['name'] for y in item['pyramids']] for item in eval(x) if item['name'] == 'MATCHES_PYRAMID'), None))
     # df = df.sort_values(by=['fitness', 'sharpe'], ascending=[True, True]).reset_index(drop=True)
     id_list = df['id'].tolist()
-    # 这里面替换你的alpha_id
-    submittable_alphas = id_list
 
-    for alpha_id in submittable_alphas:
-        status_code = submit_alpha(s, alpha_id)
+    for id in id_list:
+        status_code = submit_alpha(s, id)
         if status_code == 200 or status_code == 403:
             df = pd.read_csv(submitable_alpha_file)
-            df = df[df['id'] != alpha_id]
+            df = df[df['id'] != id]
             df.to_csv(submitable_alpha_file, index=False)
