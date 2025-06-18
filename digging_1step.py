@@ -57,8 +57,8 @@ async def simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_li
             tasks.append(task)
 
     await asyncio.gather(*tasks)
-    # 关闭所有会话
 
+    # 关闭所有会话
     for session_manager in session_managers:
         await session_manager.session.close()
 
@@ -68,14 +68,12 @@ def read_completed_alphas(filepath):
     从指定文件中读取已经完成的alpha表达式
     '''
     completed_alphas = set()
-
     try:
         with open(filepath, mode='r') as f:
             for line in f:
                 completed_alphas.add(line.strip())
     except FileNotFoundError:
         print(f'File {filepath} not found.')
-
     return completed_alphas
 
 
@@ -88,14 +86,14 @@ if __name__ == '__main__':
     # pc_fields = process_datafields(df, 'matrix') + process_datafields(df, 'vector')
     pc_fields = recommended_fields_1  # 这个是推荐字段, 可以取消注释直接使用
     first_order = first_order_factory(pc_fields, ts_ops + basic_ops)
-    # 用region_dict去找到对应region和univsere作为simulation的setting
+    # 使用region_dict去找到对应region和univsere作为simulation的setting
     region_dict = {'usa': ('USA', 'TOP3000'), 
                    'asi': ('ASI', 'MINVOL1M'), 
-                   'eur': ('EUR', 'TOP1200'),
+                   'eur': ('EUR', 'TOP1200'), 
                    'glb': ('GLB', 'TOP3000'), 
                    'hkg': ('HKG', 'TOP800'), 
                    'twn': ('TWN', 'TOP500'), 
-                   'jpn': ('JPN', 'TOP1600'),
+                   'jpn': ('JPN', 'TOP1600'), 
                    'kor': ('KOR', 'TOP600'), 
                    'chn': ('CHN', 'TOP2000U'), 
                    'amr': ('AMR', 'TOP600')}
@@ -113,6 +111,4 @@ if __name__ == '__main__':
     delay_list = [1] * len(alpha_list)  # 扩展 decay_list
     stone_bag = []
     # 执行异步模拟, 并控制并发数量为3
-    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list,
-                                         step1_tag, 'SUBINDUSTRY',
-                                         stone_bag, n_jobs=3))
+    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, step1_tag, 'SUBINDUSTRY', stone_bag, n_jobs=3))

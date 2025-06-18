@@ -51,9 +51,7 @@ async def simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_li
             # 将任务与当前的 session_manager 关联
             task = simulate_single(current_session_manager, alpha, region, name, neut, decay, delay, stone_bag, tags, semaphore)
             tasks.append(task)
-
     await asyncio.gather(*tasks)
-
     # 关闭所有会话
     for session_manager in session_managers:
         await session_manager.session.close()
@@ -81,11 +79,7 @@ if __name__ == '__main__':
     dataset_id = 'fundamental6'
     step2_tag = f'{dataset_id}_usa_2step'
     step3_tag = f'{dataset_id}_usa_3step'
-    so_tracker = get_alphas('2024-10-07', '2025-12-31',
-                            1.00, 0.75,
-                            100, 100,
-                            region, universe, delay, instrumentType,
-                            500, 'track', tag=step2_tag)
+    so_tracker = get_alphas('2024-10-07', '2025-12-31', 1.00, 0.75, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step2_tag)
     print(len(so_tracker['next']))
     print(len(so_tracker['decay']))
     so_layer = transform(so_tracker['next'] + so_tracker['decay'])
@@ -94,10 +88,10 @@ if __name__ == '__main__':
 
     for expr, decay in so_layer:
         for alpha in trade_when_factory('trade_when', expr, region, delay):
-            so_alpha_dict[region].append((alpha,decay))
+            so_alpha_dict[region].append((alpha, decay))
 
     for key, value in so_alpha_dict.items():
-        print(f'{key} : {len(value)}')
+        print(f'{key}: {len(value)}')
 
     # 读取已完成的alpha表达式
     completed_alphas = read_completed_alphas(f'records/{step3_tag}_simulated_alpha_expression.txt')
@@ -117,6 +111,4 @@ if __name__ == '__main__':
     delay_list = [1] * len(alpha_list)  # 扩展 region_list
     stone_bag = []
     # 执行异步模拟, 并控制并发数量为3
-    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list,
-                                         step3_tag, 'SUBINDUSTRY',
-                                         stone_bag, n_jobs=3))
+    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, step3_tag, 'SUBINDUSTRY', stone_bag, n_jobs=3))
