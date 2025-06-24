@@ -126,12 +126,12 @@ if __name__ == '__main__':
 import os
 import time
 import datetime
+import requests
 import pandas as pd
 from machine_lib import login
-from config import RECORDS_PATH
-import requests
-from ast import literal_eval
 from urllib.parse import quote
+from config import RECORDS_PATH
+
 
 pd.set_option('expand_frame_repr', False)
 pd.set_option('display.max_rows', 1000)
