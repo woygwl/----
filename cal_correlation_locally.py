@@ -275,7 +275,7 @@ if __name__ == '__main__':
     os_alpha_ids, os_alpha_rets = load_data()
     alpha_ids = pd.read_csv(r'records\submitable_alpha.csv')
     # 并行执行 calc_self_corr
-    with ThreadPoolExecutor(max_workers=10) as executor:  # 可根据实际情况调整 max_workers
+    with ThreadPoolExecutor(max_workers=5) as executor:  # 可根据实际情况调整 max_workers
         results = list(executor.map(
             lambda alpha_id: calc_self_corr(
                 alpha_id=alpha_id,

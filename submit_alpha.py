@@ -245,8 +245,17 @@ if __name__ == '__main__':
 
     id_list = read_alpha_ids(file_paths['final'])
 
+    i, j = 0, 0
     for alpha_id in id_list:
         status_code = submit_alpha(s, alpha_id)
         if status_code in (200, 403):  # 提交成功或失败需跳过
             for path in file_paths.values():
                 remove_alpha_id(path, alpha_id)
+            if status_code == 200:
+                i += 1
+                print(f"Alpha submitted successfully: {i}\nAlpha failed to submit: {j}")
+            elif status_code == 403:
+                j += 1
+                print(f"Alpha submitted successfully: {i}\nAlpha failed to submit: {j}")
+            else:
+                print(f'No alpha submitted successfully or failed to submit.\nAlpha submitted successfully: {i}\nAlpha failed to submit: {j}')
