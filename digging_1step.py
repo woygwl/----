@@ -3,7 +3,8 @@ import random
 import asyncio
 from fields import *
 from config import *
-from machine_lib import login, async_login, simulate_single, first_order_factory, ts_ops, basic_ops
+from machine_lib import login, async_login, simulate_single, first_order_factory, ts_ops, basic_ops, get_datafields, process_datafields
+n_jobs = 8
 
 
 class SessionManager:
@@ -18,7 +19,7 @@ class SessionManager:
         self.start_time = time.time()
 
 
-async def simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, name, neut, stone_bag=[], n_jobs=3):
+async def simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, name, neut, stone_bag=[], n_jobs=n_jobs):
     n = n_jobs
     semaphore = asyncio.Semaphore(n)
     tasks = []
@@ -66,23 +67,26 @@ def read_completed_alphas(filepath):
 
 if __name__ == '__main__':
     # 配置区域
-    dataset_id = 'fundamental6'
-    step1_tag = f'{dataset_id}_usa_1step'
+    dataset_id = 'pv1'
+    region = 'EUR'
+    step1_tag = f'{dataset_id}_{region.lower()}_1step'
+    universe = 'TOP2500'
+    delay = 1
     s = login()
-    # df = get_datafields(s, dataset_id=dataset_id, region='USA', universe='TOP3000', delay=1)
-    # pc_fields = process_datafields(df, 'matrix') + process_datafields(df, 'vector')
-    pc_fields = recommended_fields_1  # 这个是推荐字段, 可以取消注释直接使用
+    df = get_datafields(s, dataset_id=dataset_id, region=region, universe=universe, delay=delay)
+    pc_fields = process_datafields(df, 'matrix') + process_datafields(df, 'vector')
+    # pc_fields = recommended_fields_1  # 这个是推荐字段, 可以取消注释直接使用
     first_order = first_order_factory(pc_fields, ts_ops + basic_ops)
-    # 使用region_dict去找到对应region和univsere作为simulation的setting
+    # 使用region_dict找到对应region和univsere作为simulation的setting
     region_dict = {'usa': ('USA', 'TOP3000'), 
                    'asi': ('ASI', 'MINVOL1M'), 
-                   'eur': ('EUR', 'TOP1200'), 
+                   'eur': ('EUR', 'TOP2500'), 
                    'glb': ('GLB', 'TOP3000'), 
+                   'chn': ('CHN', 'TOP2000U'), 
                    'hkg': ('HKG', 'TOP800'), 
                    'twn': ('TWN', 'TOP500'), 
                    'jpn': ('JPN', 'TOP1600'), 
                    'kor': ('KOR', 'TOP600'), 
-                   'chn': ('CHN', 'TOP2000U'), 
                    'amr': ('AMR', 'TOP600')}
     # 读取已完成的alpha表达式
     completed_alphas = read_completed_alphas(f'records/{step1_tag}_simulated_alpha_expression.txt')
@@ -93,9 +97,9 @@ if __name__ == '__main__':
     print(len(alpha_list), 'Waiting for Simulate')
     # 打乱alpha列表顺序
     random.shuffle(alpha_list)
-    region_list = [('USA', 'TOP3000')] * len(alpha_list)  # 扩展 region_list
+    region_list = [(region, universe)] * len(alpha_list)  # 扩展 region_list
     decay_list = [6] * len(alpha_list)  # 扩展 decay_list
     delay_list = [1] * len(alpha_list)  # 扩展 decay_list
     stone_bag = []
     # 执行异步模拟, 并控制并发数量为3
-    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, step1_tag, 'SUBINDUSTRY', stone_bag, n_jobs=3))
+    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, step1_tag, 'SUBINDUSTRY', stone_bag, n_jobs=n_jobs))

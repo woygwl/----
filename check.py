@@ -189,8 +189,8 @@ def check_alpha_by_self_prod(alpha, submitable_alpha_file, mode):
 if __name__ == '__main__':
     while True:
         try:
-            mode = "USER"  # "USER" or "CONSULTANT"
-            n_jobs = 100  # 每次检查的数量
+            mode = "CONSULTANT"  # "USER" or "CONSULTANT"
+            n_jobs = 100         # 每次检查的数量
             start_date_file = os.path.join(RECORDS_PATH, 'start_date.txt')
             submitable_alpha_file = os.path.join(RECORDS_PATH, 'submitable_alpha.csv')
             # 生成一组start_date和end_date, 需要是自然日

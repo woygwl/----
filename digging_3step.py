@@ -1,6 +1,7 @@
 import time
 from config import *
 from machine_lib import *
+n_jobs = 8
 
 
 class SessionManager:
@@ -15,7 +16,7 @@ class SessionManager:
         self.start_time = time.time()
 
 
-async def simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, name, neut, stone_bag=[], n_jobs=3):
+async def simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, name, neut, stone_bag=[], n_jobs=n_jobs):
     n = n_jobs
     semaphore = asyncio.Semaphore(n)
     tasks = []
@@ -62,13 +63,13 @@ def read_completed_alphas(filepath):
 
 
 if __name__ == '__main__':
-    region = 'USA'
-    universe = 'TOP3000'
+    dataset_id = 'pv1'
+    region = 'EUR'
+    step2_tag = f'{dataset_id}_{region.lower()}_2step'
+    step3_tag = f'{dataset_id}_{region.lower()}_3step'
+    universe = 'TOP2500'
     delay = 1
     instrumentType = 'EQUITY'
-    dataset_id = 'fundamental6'
-    step2_tag = f'{dataset_id}_usa_2step'
-    step3_tag = f'{dataset_id}_usa_3step'
     so_tracker = get_alphas('2024-10-07', '2025-12-31', 1.00, 0.75, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step2_tag)
     print(len(so_tracker['next']))
     print(len(so_tracker['decay']))
@@ -92,8 +93,8 @@ if __name__ == '__main__':
     print(len(second_list), 'Waiting for simulation...')
     alpha_list = [alpha_decay[0] for alpha_decay in second_list]
     decay_list = [alpha_decay[1] for alpha_decay in second_list]
-    region_list = [('USA', 'TOP3000')] * len(alpha_list)  # 扩展 region_list
+    region_list = [(region, universe)] * len(alpha_list)  # 扩展 region_list
     delay_list = [1] * len(alpha_list)  # 扩展 region_list
     stone_bag = []
     # 执行异步模拟, 并控制并发数量为3
-    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, step3_tag, 'SUBINDUSTRY', stone_bag, n_jobs=3))
+    asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, step3_tag, 'SUBINDUSTRY', stone_bag, n_jobs=n_jobs))
