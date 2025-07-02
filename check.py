@@ -8,9 +8,10 @@ from config import RECORDS_PATH, REGION_LIST
 from concurrent.futures import ThreadPoolExecutor
 from machine_lib import login, get_alphas, set_alpha_properties
 brain_api_url = os.environ.get("BRAIN_API_URL", "https://api.worldquantbrain.com")
+default_start_date = '2025-07-01'
 
 
-def generate_date_periods(start_date_file='start_date.txt', default_start_date='2025-05-27'):
+def generate_date_periods(start_date_file='start_date.txt', default_start_date=default_start_date):
     try:
         with open(start_date_file, mode='r') as f:
             start_date_str = f.read().strip()
@@ -194,7 +195,7 @@ if __name__ == '__main__':
             start_date_file = os.path.join(RECORDS_PATH, 'start_date.txt')
             submitable_alpha_file = os.path.join(RECORDS_PATH, 'submitable_alpha.csv')
             # 生成一组start_date和end_date, 需要是自然日
-            periods = generate_date_periods(start_date_file=start_date_file, default_start_date='2025-05-27')
+            periods = generate_date_periods(start_date_file=start_date_file, default_start_date=default_start_date)
             lock = threading.Lock()
             for start_date, end_date in periods:
                 print(start_date, end_date)
