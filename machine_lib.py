@@ -364,12 +364,17 @@ def get_datafields(
 
 def process_datafields(df, data_type):
     if data_type == "matrix":
+        print(df)
         datafields = df[df['type'] == "MATRIX"]["id"].tolist()
     elif data_type == "vector":
+        print(df)
         datafields = get_vec_fields(df[df['type'] == "VECTOR"]["id"].tolist())
+    
     tb_fields = []
+
     for field in datafields:
         tb_fields.append("winsorize(ts_backfill(%s, 120), std=4)" % field)
+    
     return tb_fields
 
 

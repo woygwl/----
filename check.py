@@ -8,7 +8,7 @@ from config import RECORDS_PATH, REGION_LIST
 from concurrent.futures import ThreadPoolExecutor
 from machine_lib import login, get_alphas, set_alpha_properties
 brain_api_url = os.environ.get("BRAIN_API_URL", "https://api.worldquantbrain.com")
-default_start_date = '2025-07-01'
+default_start_date = '2025-06-28'
 
 
 def generate_date_periods(start_date_file='start_date.txt', default_start_date=default_start_date):
@@ -119,6 +119,7 @@ def check_prod_corr_test(s, alpha_id, threshold: float = 0.7):
     Saves result to dataframe
     """
     prod_corr_df = get_prod_corr(s, alpha_id)
+    print(prod_corr_df.columns.to_list())
     value = prod_corr_df[prod_corr_df.alphas > 0]["max"].max()
     result = [
         {
@@ -191,7 +192,7 @@ if __name__ == '__main__':
     while True:
         try:
             mode = "CONSULTANT"  # "USER" or "CONSULTANT"
-            n_jobs = 100         # 每次检查的数量
+            n_jobs = 1         # 每次检查的数量
             start_date_file = os.path.join(RECORDS_PATH, 'start_date.txt')
             submitable_alpha_file = os.path.join(RECORDS_PATH, 'submitable_alpha.csv')
             # 生成一组start_date和end_date, 需要是自然日
