@@ -4,7 +4,7 @@ import asyncio
 from fields import *
 from config import *
 from machine_lib import login, async_login, simulate_single, first_order_factory, ts_ops, basic_ops, get_datafields, process_datafields
-n_jobs = 8
+n_jobs = 10
 
 
 class SessionManager:

@@ -1,7 +1,7 @@
 import time
 from config import *
 from machine_lib import *
-n_jobs = 8
+n_jobs = 10
 
 
 class SessionManager:
@@ -63,11 +63,11 @@ def read_completed_alphas(filepath):
 
 
 if __name__ == '__main__':
-    dataset_id = 'pv1'
-    region = 'EUR'
+    dataset_id = 'analyst4'
+    region = 'USA'
     step2_tag = f'{dataset_id}_{region.lower()}_2step'
     step3_tag = f'{dataset_id}_{region.lower()}_3step'
-    universe = 'TOP2500'
+    universe = 'TOP3000'
     delay = 1
     instrumentType = 'EQUITY'
     so_tracker = get_alphas('2024-10-07', '2025-12-31', 1.00, 0.75, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step2_tag)
