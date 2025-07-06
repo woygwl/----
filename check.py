@@ -52,23 +52,17 @@ def get_self_corr(s, alpha_id):
     Function gets alpha's self correlation
     and save result to dataframe
     """
-
     while True:
-
-        result = s.get(
-            brain_api_url + "/alphas/" + alpha_id + "/correlations/self"
-        )
+        result = s.get(brain_api_url + "/alphas/" + alpha_id + "/correlations/self")
         if "retry-after" in result.headers:
             time.sleep(float(result.headers["Retry-After"]))
         else:
             break
     if result.json().get("records", 0) == 0:
         return pd.DataFrame()
-
     records_len = len(result.json()["records"])
     if records_len == 0:
         return pd.DataFrame()
-
     columns = [dct["name"] for dct in result.json()["schema"]["properties"]]
     self_corr_df = pd.DataFrame(result.json()["records"], columns=columns).assign(alpha_id=alpha_id)
 
@@ -80,11 +74,8 @@ def get_prod_corr(s, alpha_id):
     Function gets alpha's prod correlation
     and save result to dataframe
     """
-
     while True:
-        result = s.get(
-            brain_api_url + "/alphas/" + alpha_id + "/correlations/prod"
-        )
+        result = s.get(brain_api_url + "/alphas/" + alpha_id + "/correlations/prod")
         if "retry-after" in result.headers:
             time.sleep(float(result.headers["Retry-After"]))
         else:
@@ -93,7 +84,6 @@ def get_prod_corr(s, alpha_id):
         return pd.DataFrame()
     columns = [dct["name"] for dct in result.json()["schema"]["properties"]]
     prod_corr_df = pd.DataFrame(result.json()["records"], columns=columns).assign(alpha_id=alpha_id)
-
     return prod_corr_df
 
 
@@ -102,10 +92,17 @@ def check_self_corr_test(s, alpha_id, threshold: float = 0.7):
     Function checks if alpha's self_corr test passed
     Saves result to dataframe
     """
-
     self_corr_df = get_self_corr(s, alpha_id)
     if self_corr_df.empty:
-        result = [{"test": "SELF_CORRELATION", "result": "PASS", "limit": threshold, "value": 0, "alpha_id": alpha_id}]
+        result = [
+            {
+                "test": "SELF_CORRELATION", 
+                "result": "PASS", 
+                "limit": threshold, 
+                "value": 0, 
+                "alpha_id": alpha_id
+            }
+        ]
     else:
         value = self_corr_df["correlation"].max()
         result = [
@@ -129,8 +126,13 @@ def check_prod_corr_test(s, alpha_id, threshold: float = 0.7):
     prod_corr_df = get_prod_corr(s, alpha_id)
     value = prod_corr_df[prod_corr_df.alphas > 0]["max"].max()
     result = [
-        {"test": "PROD_CORRELATION", "result": "PASS" if value <= threshold else "FAIL", "limit": threshold,
-         "value": value, "alpha_id": alpha_id}
+        {
+            "test": "PROD_CORRELATION", 
+            "result": "PASS" if value <= threshold else "FAIL", 
+            "limit": threshold, 
+            "value": value, 
+            "alpha_id": alpha_id
+        }
     ]
     return pd.DataFrame(result)
 
@@ -142,13 +144,11 @@ def check_alpha_by_self_prod(s, alpha, submitable_alpha_file, mode):
         time.sleep(1)
         raise ValueError("Only one tag is allowed.")
     tag = tags[0] if len(tags) == 1 else ''
-
     region = alpha['region']
     delay = alpha['delay']
     universe = alpha['universe']
     instrumentType = alpha['instrumentType']
     color = alpha['color']
-
     completed_file_path = os.path.join(RECORDS_PATH, f"{tag}_checked_alpha_id.txt")
     checked_alpha_id_list = read_completed_alphas(completed_file_path)
 
@@ -229,22 +229,14 @@ if __name__ == '__main__':
                             sh_th = 1.25
                         else:
                             sh_th = 1.58
-                        need_to_check_alpha = get_alphas(start_date, end_date,
-                                                sh_th, 1,
-                                                10, 10,
-                                                region=region, universe="", delay='', instrumentType='',
-                                                alpha_num=9999, usage="submit", tag='', color_exclude='RED', s=s)
-
+                        need_to_check_alpha = get_alphas(start_date, end_date, sh_th, 1, 10, 10, region=region, universe="", delay='', instrumentType='', alpha_num=9999, usage="submit", tag='', color_exclude='RED', s=s)
                         if len(need_to_check_alpha['check']) == 0:
                             print(f"region: {region}", f"universe: all", "No alpha to check.")
                             continue
-
                         print(need_to_check_alpha['check'][0])
                         print(len(need_to_check_alpha['check']))
-
                         # 将列表等分为n份
                         split_sizes = np.array_split(need_to_check_alpha['check'], max(len(need_to_check_alpha)//10, 1))
-
                         # 将结果转换为列表形式
                         chunks = [list(chunk) for chunk in split_sizes]
 

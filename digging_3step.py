@@ -1,7 +1,7 @@
 import time
 from config import *
 from machine_lib import *
-n_jobs = 10
+n_jobs = 9
 
 
 class SessionManager:
@@ -58,16 +58,16 @@ def read_completed_alphas(filepath):
             for line in f:
                 completed_alphas.add(line.strip())
     except FileNotFoundError:
-        print(f'File {filepath} not found.')
+        print(f'read_completed_alphas: File {filepath} not found.')
     return completed_alphas
 
 
 if __name__ == '__main__':
-    dataset_id = 'analyst4'
-    region = 'USA'
+    dataset_id = 'pv1'
+    region = 'EUR'
     step2_tag = f'{dataset_id}_{region.lower()}_2step'
     step3_tag = f'{dataset_id}_{region.lower()}_3step'
-    universe = 'TOP3000'
+    universe = 'TOP2500'
     delay = 1
     instrumentType = 'EQUITY'
     so_tracker = get_alphas('2024-10-07', '2025-12-31', 1.00, 0.75, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step2_tag)

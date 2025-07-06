@@ -76,9 +76,9 @@ if __name__ == '__main__':
     universe = 'TOP3000'
     delay = 1
     s = login()
-    #df = get_datafields(s, dataset_id=dataset_id, region=region, universe=universe, delay=delay)
-    #pc_fields = process_datafields(df, 'matrix') + process_datafields(df, 'vector')
-    pc_fields = recommended_fields                    # 这个是推荐字段, 可以取消注释直接使用
+    df = get_datafields(s, dataset_id=dataset_id, region=region, universe=universe, delay=delay)
+    pc_fields = process_datafields(df, 'matrix') + process_datafields(df, 'vector')
+    # pc_fields = recommended_fields                       # 这个是推荐字段, 可以取消注释直接使用
     first_order = first_order_factory(pc_fields, ts_ops + basic_ops)
     # 使用region_dict找到对应region和univsere作为simulation的setting
     region_dict = {'usa': ('USA', 'TOP3000'), 
@@ -100,9 +100,9 @@ if __name__ == '__main__':
     print(len(alpha_list), 'Waiting for Simulate')
     # 打乱alpha列表顺序
     random.shuffle(alpha_list)
-    region_list = [(region, universe)] * len(alpha_list)  # 扩展 region_list
-    decay_list = [6] * len(alpha_list)                    # 扩展 decay_list
-    delay_list = [1] * len(alpha_list)                    # 扩展 decay_list
+    region_list = [(region, universe)] * len(alpha_list)   # 扩展 region_list
+    decay_list = [6] * len(alpha_list)                     # 扩展 decay_list
+    delay_list = [1] * len(alpha_list)                     # 扩展 decay_list
     stone_bag = []
     # 执行异步模拟, 并控制并发数量为3
     asyncio.run(simulate_multiple_alphas(alpha_list, region_list, decay_list, delay_list, step1_tag, 'SUBINDUSTRY', stone_bag, n_jobs=n_jobs))
