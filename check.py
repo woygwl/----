@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from config import RECORDS_PATH, REGION_LIST, UNIVERSE_DICT
-from machine_lib import s, login, get_alphas, set_alpha_properties
+from machine_lib import s, get_alphas, set_alpha_properties
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
 import threading

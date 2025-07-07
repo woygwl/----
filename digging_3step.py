@@ -1,7 +1,7 @@
 import time
 from config import *
 from machine_lib import *
-n_jobs = 9
+n_jobs = 8
 
 
 class SessionManager:
