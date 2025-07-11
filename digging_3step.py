@@ -1,7 +1,7 @@
 import time
 from config import *
 from machine_lib import *
-n_jobs = 5
+n_jobs = 8
 
 
 class SessionManager:
@@ -71,10 +71,10 @@ if __name__ == '__main__':
     delay = 1
     instrumentType = 'EQUITY'
     so_tracker = get_alphas('2024-10-07', '2025-12-31', 1.00, 0.75, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step2_tag)
-    print(len(so_tracker['next']))
-    print(len(so_tracker['decay']))
+    print(f"len(so_tracker['next']): {len(so_tracker['next'])}\n")
+    print(f"len(so_tracker['decay']): {len(so_tracker['decay'])}\n")
     so_layer = transform(so_tracker['next'] + so_tracker['decay'])
-    print(so_layer)
+    print(f'so_layer: {so_layer}\n')
     so_alpha_dict = defaultdict(list)
     for expr, decay in so_layer:
         for alpha in trade_when_factory('trade_when', expr, region, delay):
@@ -90,7 +90,7 @@ if __name__ == '__main__':
         print('暂时没有满足条件的二阶段因子, 请你继续运行digging_2step.')
         time.sleep(600)
         exit()
-    print(len(second_list), 'Waiting for simulation...')
+    print(f'second_list: {len(second_list)} waiting for simulation...')
     alpha_list = [alpha_decay[0] for alpha_decay in second_list]
     decay_list = [alpha_decay[1] for alpha_decay in second_list]
     region_list = [(region, universe)] * len(alpha_list)  # 扩展 region_list

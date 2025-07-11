@@ -4,7 +4,7 @@ import asyncio
 from fields import *
 from config import *
 from machine_lib import login, async_login, simulate_single, first_order_factory, ts_ops, basic_ops, get_datafields, process_datafields
-n_jobs = 10
+n_jobs = 8
 
 
 class SessionManager:
@@ -67,13 +67,14 @@ def read_completed_alphas(filepath):
 
 if __name__ == '__main__':
     # 配置
-    # pv1 EUR
+    # pv1 EUR USA GLB
+    # analyst69 EUR
     # fundamental6 CHN
-
-    dataset_id = 'analyst4'
-    region = 'USA'
+    # analyst4 USA
+    dataset_id = 'pv1'
+    region = 'EUR'
     step1_tag = f'{dataset_id}_{region.lower()}_1step'
-    universe = 'TOP3000'
+    universe = 'TOP2500'
     delay = 1
     s = login()
     df = get_datafields(s, dataset_id=dataset_id, region=region, universe=universe, delay=delay)
@@ -97,7 +98,7 @@ if __name__ == '__main__':
     alpha_list = first_order
     # 排除已完成的alpha表达式
     alpha_list = [alpha for alpha in alpha_list if alpha not in completed_alphas]
-    print(len(alpha_list), 'Waiting for Simulate')
+    print(f'alpha_list: {len(alpha_list)} waiting for Simulate')
     # 打乱alpha列表顺序
     random.shuffle(alpha_list)
     region_list = [(region, universe)] * len(alpha_list)   # 扩展 region_list

@@ -61,6 +61,9 @@ def login():
 
 s = login()
 res = s.get("https://api.worldquantbrain.com/operators")
+print(f'res: {res}\n')
+print(f'res.json(): {res.json()}\n')
+print(f'pd.DataFrame(res.json()): {pd.DataFrame(res.json())}\n')
 aval = pd.DataFrame(res.json())['name'].tolist()
 ts_ops = [op for op in ts_ops if op in aval]
 basic_ops = [op for op in basic_ops if op in aval]
@@ -659,10 +662,17 @@ def transform(next_alpha_recs):
 
 
 def first_order_factory(fields, ops_set):
+    print(f'fields: {fields}\n')
+    idx = 1
     alpha_set = []
     for field in fields:
+        print(f'==================== {idx} ====================\nfield: {field}\n')
         # reverse op does the work
-        alpha_set.append(field).append("-%s"%field)
+        print(f'alpha_set: {alpha_set}\n')
+        alpha_set.append(field)
+        print(f'alpha_set: {alpha_set}\n')
+        alpha_set.append(f"-{field}")
+        print(f'alpha_set: {alpha_set}\n')
         for op in ops_set:
             if op == "ts_percentage":
                 alpha_set += ts_comp_factory(op, field, "percentage", [0.2, 0.5, 0.8])
@@ -686,6 +696,7 @@ def first_order_factory(fields, ops_set):
             else:
                 alpha = "%s(%s)" % (op, field)
                 alpha_set.append(alpha)
+        idx += 1
     return alpha_set
 
 

@@ -1,7 +1,7 @@
 import time
 from config import *
 from machine_lib import *
-n_jobs = 10
+n_jobs = 8
 
 
 class SessionManager:
@@ -62,11 +62,11 @@ def read_completed_alphas(filepath):
 
 
 if __name__ == '__main__':
-    dataset_id = 'analyst4'
-    region = 'USA'
+    dataset_id = 'pv1'
+    region = 'EUR'
     step1_tag = f'{dataset_id}_{region.lower()}_1step'
     step2_tag = f'{dataset_id}_{region.lower()}_2step'
-    universe = 'TOP3000'
+    universe = 'TOP2500'
     delay = 1
     instrumentType = 'EQUITY'
     fo_tracker = get_alphas('2024-10-07', '2025-12-31', 0.75, 0.5, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step1_tag)
@@ -86,7 +86,7 @@ if __name__ == '__main__':
         print('暂时没有满足条件的一阶段因子, 继续运行digging_1step.')
         time.sleep(600)
         exit()
-    print(len(second_list), 'Waiting for simulation...')
+    print(f'second_list: {len(second_list)} waiting for simulation...')
     alpha_list = [alpha_decay[0] for alpha_decay in second_list]
     decay_list = [alpha_decay[1] for alpha_decay in second_list]
     region_list = [(region, universe)] * len(alpha_list)  # 扩展 region_list
