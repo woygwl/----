@@ -1,6 +1,7 @@
 import time
 import random
 import asyncio
+from tqdm import tqdm
 from fields import *
 from config import *
 from machine_lib import login, async_login, simulate_single, first_order_factory, ts_ops, basic_ops, get_datafields, process_datafields

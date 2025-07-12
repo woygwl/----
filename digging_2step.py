@@ -1,4 +1,5 @@
 import time
+from tqdm import tqdm
 from config import *
 from machine_lib import *
 n_jobs = 8
@@ -72,10 +73,10 @@ if __name__ == '__main__':
     fo_tracker = get_alphas('2024-10-07', '2025-12-31', 0.75, 0.5, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step1_tag)
     fo_layer = transform(fo_tracker['next'] + fo_tracker['decay'])
     so_alpha_dict = defaultdict(list)
-    for expr, decay in fo_layer:
-        for alpha in get_group_second_order_factory([expr], group_ops, region):
+    for expr, decay in tqdm(fo_layer):
+        for alpha in tqdm(get_group_second_order_factory([expr], group_ops, region)):
             so_alpha_dict[region].append((alpha,decay))
-    for key, value in so_alpha_dict.items():
+    for key, value in tqdm(so_alpha_dict.items()):
         print(f'{key}: {len(value)}')
     # 读取已完成的alpha表达式
     completed_alphas = read_completed_alphas(f'records/{step2_tag}_simulated_alpha_expression.txt')

@@ -1,5 +1,6 @@
 import time
 import os
+from tqdm import tqdm
 import numpy as np
 import pandas as pd
 from config import RECORDS_PATH, REGION_LIST, UNIVERSE_DICT
@@ -89,6 +90,7 @@ def check_self_corr_test(s, alpha_id, threshold: float = 0.7):
     Saves result to dataframe
     """
     self_corr_df = get_self_corr(s, alpha_id)
+    print(f'self_corr_df:\n{self_corr_df}\n\n')
     if self_corr_df.empty:
         result = [
             {
@@ -118,18 +120,29 @@ def check_prod_corr_test(s, alpha_id, threshold: float = 0.7):
     Function checks if alpha's prod_corr test passed
     Saves result to dataframe
     """
-
     prod_corr_df = get_prod_corr(s, alpha_id)
-    value = prod_corr_df[prod_corr_df['alphas'] > 0]["max"].max()
-    result = [
-        {
-            "test": "PROD_CORRELATION", 
-            "result": "PASS" if value <= threshold else "FAIL", 
-            "limit": threshold, 
-            "value": value, 
-            "alpha_id": alpha_id
-        }
-    ]
+    print(f'prod_corr_df:\n{prod_corr_df}\n\n')
+    if prod_corr_df.empty:
+        result = [
+            {
+                "test": "PROD_CORRELATION", 
+                "result": "PASS", 
+                "limit": threshold, 
+                "value": 0, 
+                "alpha_id": alpha_id
+            }
+        ]
+    else:
+        value = prod_corr_df[prod_corr_df['alphas'] > 0]["max"].max()
+        result = [
+            {
+                "test": "PROD_CORRELATION", 
+                "result": "PASS" if value <= threshold else "FAIL", 
+                "limit": threshold, 
+                "value": value, 
+                "alpha_id": alpha_id
+            }
+        ]
     return pd.DataFrame(result)
 
 
@@ -211,8 +224,8 @@ if __name__ == '__main__':
             lock = threading.Lock()
             for start_date, end_date in periods:
                 print(f'start_date: {start_date}\nend_date: {end_date}\n\n')
-                for region in REGION_LIST:
-                    for universe in UNIVERSE_DICT["instrumentType"]['EQUITY']['region'][region]:
+                for region in tqdm(REGION_LIST):
+                    for universe in tqdm(UNIVERSE_DICT["instrumentType"]['EQUITY']['region'][region]):
                         if mode == "USER":
                             sh_th = 1.25
                         else:
@@ -228,9 +241,9 @@ if __name__ == '__main__':
                         # 将结果转换为列表形式
                         chunks = [list(chunk) for chunk in split_sizes]
 
-                        for chunk in chunks:
+                        for chunk in tqdm(chunks):
                             with ThreadPoolExecutor(max_workers=n_jobs) as executor:
-                                for alpha in chunk:
+                                for alpha in tqdm(chunk):
                                     executor.submit(check_alpha_by_self_prod, s, alpha, submitable_alpha_file, mode)
 
                         if end_date < str(datetime.now().date() - timedelta(days=3)):

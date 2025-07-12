@@ -1,4 +1,5 @@
 import time
+from tqdm import tqdm
 from config import *
 from machine_lib import *
 n_jobs = 8
@@ -10,7 +11,7 @@ class SessionManager:
         self.start_time = start_time
         self.expiry_time = expiry_time
     async def refresh_session(self):
-        print('Session expired, logging in again...')
+        print('Session expired, logging in again...\n\n')
         await self.session.close()
         self.session = await async_login()
         self.start_time = time.time()
@@ -58,7 +59,7 @@ def read_completed_alphas(filepath):
             for line in f:
                 completed_alphas.add(line.strip())
     except FileNotFoundError:
-        print(f'read_completed_alphas: File {filepath} not found.')
+        print(f'read_completed_alphas: File {filepath} not found.\n\n')
     return completed_alphas
 
 
@@ -72,14 +73,14 @@ if __name__ == '__main__':
     instrumentType = 'EQUITY'
     so_tracker = get_alphas('2024-10-07', '2025-12-31', 1.00, 0.75, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step2_tag)
     print(f"len(so_tracker['next']): {len(so_tracker['next'])}\n")
-    print(f"len(so_tracker['decay']): {len(so_tracker['decay'])}\n")
+    print(f"len(so_tracker['decay']): {len(so_tracker['decay'])}\n\n")
     so_layer = transform(so_tracker['next'] + so_tracker['decay'])
     print(f'so_layer: {so_layer}\n')
     so_alpha_dict = defaultdict(list)
-    for expr, decay in so_layer:
-        for alpha in trade_when_factory('trade_when', expr, region, delay):
+    for expr, decay in tqdm(so_layer):
+        for alpha in tqdm(trade_when_factory('trade_when', expr, region, delay)):
             so_alpha_dict[region].append((alpha, decay))
-    for key, value in so_alpha_dict.items():
+    for key, value in tqdm(so_alpha_dict.items()):
         print(f'{key}: {len(value)}')
     # 读取已完成的alpha表达式
     completed_alphas = read_completed_alphas(f'records/{step3_tag}_simulated_alpha_expression.txt')
@@ -90,7 +91,7 @@ if __name__ == '__main__':
         print('暂时没有满足条件的二阶段因子, 请你继续运行digging_2step.')
         time.sleep(600)
         exit()
-    print(f'second_list: {len(second_list)} waiting for simulation...')
+    print(f'second_list: {len(second_list)} waiting for simulation...\n\n')
     alpha_list = [alpha_decay[0] for alpha_decay in second_list]
     decay_list = [alpha_decay[1] for alpha_decay in second_list]
     region_list = [(region, universe)] * len(alpha_list)  # 扩展 region_list
