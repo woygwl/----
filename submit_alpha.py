@@ -259,5 +259,5 @@ if __name__ == '__main__':
                 print(f"Alpha submitted successfully: {i}\nAlpha failed to submit: {j}")
             else:
                 print(f'No alpha submitted successfully or failed to submit.\nAlpha submitted successfully: {i}\nAlpha failed to submit: {j}')
-        if i == 4:
-            break
+#        if i == 4:
+#            break
