@@ -72,15 +72,19 @@ if __name__ == '__main__':
     # analyst69 EUR
     # fundamental6 CHN
     # analyst4 USA
-    dataset_id = 'pv1'
-    region = 'EUR'
+    # model110 ASI GLB
+
+    # 1. ASI > USA > EUR > GLB > CHN
+    # 2. model > pv > analyst = fundamental > other > option > news = insiders = sentiment > risk = socialmedia > earnings
+    dataset_id = 'model110'
+    region = 'GLB'
     step1_tag = f'{dataset_id}_{region.lower()}_1step'
-    universe = 'TOP2500'
+    universe = 'MINVOL1M'
     delay = 1
     s = login()
     df = get_datafields(s, dataset_id=dataset_id, region=region, universe=universe, delay=delay)
     pc_fields = process_datafields(df, 'matrix') + process_datafields(df, 'vector')
-    # pc_fields = recommended_fields                       # 这个是推荐字段, 可以取消注释直接使用
+    # pc_fields = recommended_fields                                 # 这个是推荐字段, 可以取消注释直接使用
     first_order = first_order_factory(pc_fields, ts_ops + basic_ops)
     # 使用region_dict找到对应region和univsere作为simulation的setting
     region_dict = {'usa': ('USA', 'TOP3000'), 

@@ -1,14 +1,16 @@
 import os
-import requests
-from time import sleep
-import time
 import json
-import pandas as pd
-from itertools import product
-from collections import defaultdict
-import aiofiles
+import time
 import aiohttp
 import asyncio
+import aiofiles
+import requests
+import numpy as np
+import pandas as pd
+from time import sleep
+from itertools import product
+from collections import defaultdict
+from sklearn.cluster import DBSCAN
 import logging as logger
 # 设置日志级别为 INFO
 logger.basicConfig(level=logger.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -629,20 +631,79 @@ def get_alphas(start_date, end_date, sharpe_th, fitness_th, longCount_th, shortC
     return output_dict
 
 
-def prune(next_alpha_recs, prefix, keep_num):
-    # prefix is datafield prefix, like fnd6, mdl175 ...
-    # keep_num is the num of top sharpe same-field alpha to keep 
-    output = []
-    num_dict = defaultdict(int)
-    for rec in next_alpha_recs:
-        exp = rec[1]
-        field = exp.split(prefix)[-1].split(",")[0]
-        if num_dict[field] < keep_num:
-            num_dict[field] += 1
-            decay = rec[-1]
-            exp = rec[1]
-            output.append([exp, decay])
-    return output
+# def prune(next_alpha_recs, prefix, keep_num):
+#     # prefix is datafield prefix, like fnd6, mdl175 ...
+#     # keep_num is the num of top sharpe same-field alpha to keep 
+#     output = []
+#     num_dict = defaultdict(int)
+#     for rec in next_alpha_recs:
+#         exp = rec[1]
+#         field = exp.split(prefix)[-1].split(",")[0]
+#         if num_dict[field] < keep_num:
+#             num_dict[field] += 1
+#             decay = rec[-1]
+#             exp = rec[1]
+#             output.append([exp, decay])
+#     return output
+
+
+# model = AutoModel.from_pretrained("microsoft/codebert-base")
+# tokenizer = AutoTokenizer.from_pretrained("microsoft/codebert-base")
+# 
+# def get_semantic_vector(expression):
+#     """将表达式转换为语义向量"""
+#     # 编码表达式
+#     inputs = tokenizer(
+#         expression, 
+#         max_length=128, 
+#         truncation=True, 
+#         padding=True, 
+#         return_tensors="pt"
+#     )
+#     # 获取模型输出（最后一层隐藏状态）
+#     with torch.no_grad():
+#         outputs = model(**inputs)
+#     # 取[CLS]标记的向量作为整个表达式的语义表示
+#     cls_vector = outputs.last_hidden_state[:, 0, :].squeeze().numpy()
+#     return cls_vector
+# 
+# def prune(next_alpha_recs, keep_ratio=0.1, eps=0.4):
+#     """基于语义向量的剪枝"""
+#     output = []
+#     
+#     # 步骤1：为每个表达式生成语义向量
+#     expressions = [rec[1] for rec in next_alpha_recs]
+#     vectors = np.array([get_semantic_vector(exp) for exp in expressions])
+#     
+#     # 步骤2：基于语义向量聚类（DBSCAN适合未知类别数量的场景）
+#     # eps：聚类的距离阈值（值越小，聚类越精细）
+#     hdbscan = HDBSCAN(
+#         min_samples=1, 
+#         metric="cosine", 
+#         core_dist_n_jobs=-1
+#     )
+#     # dbscan = DBSCAN(metric="cosine", eps=eps, min_samples=1)
+#     clusters = hdbscan.fit_predict(vectors)  # 每个表达式的聚类标签（-1表示噪声点）
+#     
+#     # 步骤3：按聚类分组（每个聚类视为一个"语义相似组"）
+#     cluster_groups = defaultdict(list)
+#     for i, rec in enumerate(next_alpha_recs):
+#         cluster_id = clusters[i]
+#         cluster_groups[cluster_id].append(rec)
+#     
+#     # 步骤4：每个聚类内按夏普比率排序并保留top比例
+#     for recs in cluster_groups.values():
+#         # 按夏普比率降序排序，相同则按alpha_id升序
+#         recs_sorted = sorted(recs, key=lambda x: (-x[2], x[0]))
+#         
+#         # 计算保留数量（至少1个）
+#         keep_num = max(1, int(len(recs_sorted) * keep_ratio))
+#         
+#         # 保留top的记录
+#         for rec in recs_sorted[:keep_num]:
+#             output.append([rec[1], rec[-1]])  # [表达式, 衰减因子]
+#     
+#     return output
 
 
 def transform(next_alpha_recs):

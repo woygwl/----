@@ -72,6 +72,15 @@ if __name__ == '__main__':
     delay = 1
     instrumentType = 'EQUITY'
     so_tracker = get_alphas('2024-10-07', '2025-12-31', 1.00, 0.75, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step2_tag)
+
+
+    # import pnl_test
+    # s_num = len(so_tracker)
+    # print(s_num, "个 alpha 进行 pnl 合法检测, 请耐心等待...")
+    # so_tracker = pnl_test.get_alpha_pnl_legal_list(so_tracker)
+    # print(s_num - len(so_tracker), "个不合法的pnl, 已被剔除..." )
+
+
     print(f"len(so_tracker['next']): {len(so_tracker['next'])}\n")
     print(f"len(so_tracker['decay']): {len(so_tracker['decay'])}\n\n")
     so_layer = transform(so_tracker['next'] + so_tracker['decay'])

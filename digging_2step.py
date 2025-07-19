@@ -71,6 +71,16 @@ if __name__ == '__main__':
     delay = 1
     instrumentType = 'EQUITY'
     fo_tracker = get_alphas('2024-10-07', '2025-12-31', 0.75, 0.5, 100, 100, region, universe, delay, instrumentType, 500, 'track', tag=step1_tag)
+
+
+    import pnl_test
+    f_num = len(fo_tracker)
+    print(f_num, "个 alpha 进行 pnl 合法检测, 请耐心等待...")
+    fo_tracker = pnl_test.get_alpha_pnl_legal_list(fo_tracker)
+    print(f_num - len(fo_tracker), "个不合法的pnl, 已被剔除..." )
+
+
+
     fo_layer = transform(fo_tracker['next'] + fo_tracker['decay'])
     so_alpha_dict = defaultdict(list)
     for expr, decay in tqdm(fo_layer):
